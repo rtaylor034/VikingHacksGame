@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BuffEffect
+public class BuffEffect : Thing
 {
-    public string ID { get; set; }
+
     public Action OnGetAction { get; set; }
 }

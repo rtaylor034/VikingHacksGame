@@ -3,10 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MilestoneInfo : Thing
+public class AutoBuff : Thing
 {
-    //required
-    public List<Construction<BuffEffect>> Choices { get; set; } = new();
     public Func<bool> Condition { get; set; }
-
+    public Construction<BuffEffect> Effect { get; set; }
 }
