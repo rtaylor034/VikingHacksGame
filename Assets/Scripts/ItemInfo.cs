@@ -8,8 +8,11 @@ public class ItemInfo
     [Flags]
     public enum ECategory
     {
-
+        Sustainable = 1,
+        Nonsustainable = 2,
+        OtherThing = 4
     }
+
     //required
     public string ID { get; set; }
     public string DisplayName { get; set; }
@@ -18,9 +21,9 @@ public class ItemInfo
     
 
     //defaulted
-    public (Modifier mod, bool f) SustianMod { get; set; } = (v => v, false);
-    public (Modifier mod, bool f) IdleMod { get; set; } = (v => v, false);
-    public (Modifier mod, bool f) ClickMod { get; set; } = (v => v, false);
+    public Modifier SustianMod { get; set; } = (v => (v, false));
+    public Modifier IdleMod { get; set; } = (v => (v, false));
+    public Modifier ClickMod { get; set; } = (v => (v, false));
     public Func<ItemInfo, float> SustainEffectFunction { get; set; } = _ => 0;
     public Func<ItemInfo, bool> AdditionalBuyConditions { get; set; } = _ => true;
 
@@ -34,9 +37,9 @@ public class ItemInfo
         GameManager.GAME.Cash -= Price;
         GameManager.GAME.Sustain += SustainEffect;
         AmountOwned++;
-        GameManager.GAME.AddClickMod(ClickMod.mod, ClickMod.f);
-        GameManager.GAME.AddIdleMod(IdleMod.mod, IdleMod.f);
-        GameManager.GAME.AddSustainMod(SustianMod.mod, SustianMod.f);
+        GameManager.GAME.AddClickMod(ClickMod);
+        GameManager.GAME.AddIdleMod(IdleMod);
+        GameManager.GAME.AddSustainMod(SustianMod);
         Price = PriceFunction(this);
         SustainEffect = SustainEffectFunction(this);
         

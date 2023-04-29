@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public delegate float Modifier(float preVal);
+public delegate (float mod, bool front) Modifier(float preVal);
 public delegate T Construction<T>();
 public class GameManager : MonoBehaviour
 {
@@ -32,10 +33,47 @@ public class GameManager : MonoBehaviour
     private List<Modifier> _sustainModifiers;
 
     private List<ItemInfo> _availableItems;
-    private List<BuffEffect> _ActiveBuffs;
+    private List<BuffEffect> _activeBuffs;
     private List<MilestoneInfo> _availableMilestones;
 
+    private void StartingAvailable()
+    {
+        _availableItems = new()
+        {
+            new()
+            {
+                ID = "test_item",
+                DisplayName = "Test Item",
+                Categories = ItemInfo.ECategory.Nonsustainable,
+                PriceFunction = i => 10 + 1*i.AmountOwned,
+                IdleMod = v => (v + 1, true)
+                
+            }
+        };
+        _availableMilestones = new()
+        {
+            new()
+            {
+                ID = "test_milestone",
+                Condition = () => Cash > 100,
+                Choices =
+                {
+                    () => new()
+                    {
+                        ID = "test_buff",
+                        OnGetAction = () =>
+                        {
+                            foreach (var item in _availableItems.Where(i => i.ID == "test_item"))
+                            {
+                                item.IdleMod = v => (v + 2, true);
+                            }
+                        }
+                    }
+                }
 
+            }
+        };
+    }
     private void NewGame()
     {
         CPS = STARTING_CPS;
@@ -46,6 +84,7 @@ public class GameManager : MonoBehaviour
         _clickModifiers = new();
         _idleModifiers = new();
         _sustainModifiers = new();
+        StartingAvailable();
     }
     private void Awake()
     {
@@ -72,36 +111,45 @@ public class GameManager : MonoBehaviour
     {
         Cash += CPC;
     }
-    public void AddClickMod(Modifier mod, bool front = false)
+
+    public void AddBuffEffect(BuffEffect buff)
     {
+        buff.OnGetAction();
+        _activeBuffs.Add(buff);
+    }
+    public void AddClickMod(Modifier mod)
+    {
+        (_, bool front) = mod(CPC);
         if (front) _clickModifiers.Insert(0, mod);
         else _clickModifiers.Add(mod);
         float s = STARTING_CPC;
         foreach (var func in _clickModifiers)
         {
-            s = func(s);
+            (s, _) = func(s);
         }
         CPC = s;
     }
-    public void AddIdleMod(Modifier mod, bool front = false)
+    public void AddIdleMod(Modifier mod)
     {
+        (_, bool front) = mod(CPS);
         if (front) _idleModifiers.Insert(0, mod);
         else _idleModifiers.Add(mod);
         float s = STARTING_CPS;
         foreach (var func in _idleModifiers)
         {
-            s = func(s);
+            (s, _) = func(s);
         }
         CPS = s;
     }
-    public void AddSustainMod(Modifier mod, bool front = false)
+    public void AddSustainMod(Modifier mod)
     {
+        (_, bool front) = mod(SPM);
         if (front) _sustainModifiers.Insert(0, mod);
         else _sustainModifiers.Add(mod);
         float s = STARTING_SPM;
         foreach (var func in _sustainModifiers)
         {
-            s = func(s);
+            (s, _) = func(s);
         }
         SPM = s;
     }
