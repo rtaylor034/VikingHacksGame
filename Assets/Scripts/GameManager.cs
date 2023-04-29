@@ -1,12 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public delegate float Modifier(float preVal);
 public delegate T Construction<T>();
 public class GameManager : MonoBehaviour
 {
+
+    public event Action<MilestoneInfo> MilestoneConditionMet;
+
     public static GameManager GAME;
 
     public readonly static float STARTING_CPS = 0;
@@ -18,7 +22,10 @@ public class GameManager : MonoBehaviour
 
     public float Cash { get; set; }
     public float Sustian { get; set; }
-    
+
+    public float CPS { get; private set; }
+    public float CPC { get; private set; }
+    public float SPM { get; private set; }
 
     private List<Modifier> _clickModifiers;
     private List<Modifier> _idleModifiers;
@@ -28,9 +35,6 @@ public class GameManager : MonoBehaviour
     private List<BuffEffect> _ActiveBuffs;
     private List<MilestoneInfo> _availableMilestones;
 
-    public float CPS { get; private set; }
-    public float CPC { get; private set; }
-    public float SPM { get; private set; }
 
     private void NewGame()
     {
@@ -47,24 +51,27 @@ public class GameManager : MonoBehaviour
     {
         GAME = this;
         NewGame();
+        OneSecUpdate();
     }
-    // Start is called before the first frame update
-    void Start()
+
+    async Task OneSecUpdate()
     {
-
+        foreach (var milestone in _availableMilestones)
+        {
+            if (milestone.Condition())
+            {
+                MilestoneConditionMet(milestone);
+                _availableMilestones.Remove(milestone);
+            }
+        }
+        await Task.Delay(1000);
+        OneSecUpdate();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    void Click()
+    void OnClick()
     {
         Cash += CPC;
     }
-
     public void AddClickMod(Modifier mod, bool front = false)
     {
         if (front) _clickModifiers.Insert(0, mod);
