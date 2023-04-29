@@ -9,7 +9,8 @@ public delegate (float mod, bool front) Modifier(float preVal);
 public delegate T Construction<T>();
 public class GameManager : MonoBehaviour
 {
-
+    [SerializeField]
+    private Sprite[] _sprites;
     public event Action<MilestoneInfo> MilestoneConditionMet;
     public event Action<AutoBuff> AutoBuffConditionMet;
     public event Action<BuffEffect> BuffAdded;
@@ -166,67 +167,8 @@ public class GameManager : MonoBehaviour
                 PriceFunction = i => 10 + 1*i.AmountOwned,
                 IdleMod = v => (v + 1, true)
                 
-            },
-            new ItemInfo()
-            {
-                ID = "solar",
-                DisplayName = "Solar Panels",
-                Desc = "S",
-                Categories = ItemInfo.ECategory.Sustainable,
-                PriceFunction = i => 10 + 1*i.AmountOwned,
-                IdleMod = v => (v + 1, true)
-
-            },
-            new ItemInfo()
-            {
-                ID = "domestic",
-                DisplayName = "Domestic Goods",
-                Desc = "D",
-                Categories = ItemInfo.ECategory.Sustainable,
-                PriceFunction = i => 10 + 1*i.AmountOwned,
-                IdleMod = v => (v + 1, true)
-
-            },
-               new ItemInfo()
-            {
-                ID = "wind",
-                DisplayName = "Wind Turbines",
-                Desc = "W",
-                Categories = ItemInfo.ECategory.Nonsustainable,
-                PriceFunction = i => 10 + 1*i.AmountOwned,
-                IdleMod = v => (v + 1, true)
-
-            },
-                new ItemInfo()
-            {
-                ID = "petrolium",
-                DisplayName = "Petrolium Barrels",
-                Desc = "P",
-                Categories = ItemInfo.ECategory.Nonsustainable,
-                PriceFunction = i => 10 + 1*i.AmountOwned,
-                IdleMod = v => (v + 1, true)
-
-            },
-                new ItemInfo()
-            {
-                ID = "imported",
-                DisplayName = "Imported Goods",
-                Desc = "I",
-                Categories = ItemInfo.ECategory.Nonsustainable,
-                PriceFunction = i => 10 + 1*i.AmountOwned,
-                IdleMod = v => (v + 1, true)
-
-            },
-            new ItemInfo()
-            {
-                ID = "oil",
-                DisplayName = "Oil Rigs",
-                Desc = "O",
-                Categories = ItemInfo.ECategory.Nonsustainable,
-                PriceFunction = i => 10 + 1*i.AmountOwned,
-                IdleMod = v => (v + 1, true)
-
             }
+           
         };
 
         //MILESTONES
@@ -274,6 +216,55 @@ public class GameManager : MonoBehaviour
                     }
                 }
 
+            },
+            new MilestoneInfo()
+            {
+                ID = "eoe",
+                DisplayName = "Testoeune",
+                Desc = "D",
+                Condition = () => Cash > 1000,
+                Choices =
+                {
+                    () => new BuffEffect()
+                    {
+                        ID = "test_buff",
+                        DisplayName = "Test Milestone",
+                        Desc = "D",
+                        OnGetAction = () =>
+                        {
+                            ItemInfo item = new()
+                            {
+                                ID = "upgrade_item",
+                                DisplayName = "Upgrade Item",
+                                Desc = "D",
+                                Categories = ItemInfo.ECategory.Nonsustainable,
+                                PriceFunction = i => 15 + 2*i.AmountOwned,
+                                ClickMod = v => (v + 1, true)
+                            };
+                            _availableItems.Add(item);
+                        }
+                    },
+                    () => new BuffEffect()
+                    {
+                        ID = "test_buff2",
+                        DisplayName = "Test Buff 2",
+                        Desc = "D",
+                        OnGetAction = () =>
+                        {
+                            ItemInfo item = new()
+                            {
+                                ID = "upgrade_item",
+                                DisplayName = "Upgrade Item",
+                                Desc = "D",
+                                Categories = ItemInfo.ECategory.Nonsustainable,
+                                PriceFunction = i => 15 + 2*i.AmountOwned,
+                                ClickMod = v => (v + 1, true)
+                            };
+                            _availableItems.Add(item);
+                        }
+                    }
+                }
+
             }
         };
 
@@ -291,6 +282,77 @@ public class GameManager : MonoBehaviour
                     OnGetAction = () =>
                     {
                         AddClickMod(v => (v / 2, false));
+                    }
+                }
+                
+            },
+            new AutoBuff()
+            {
+                Condition = () => Cash > 1000,
+                Effect = () => new BuffEffect()
+                {
+                    ID = "1k",
+                    DisplayName = "1k",
+                    Desc = "Desc",
+                    OnGetAction = () =>
+                    {
+                        ItemInfo item = new()
+                            {
+                                ID = "solar",
+                                DisplayName = "Solar Panels",
+                                Desc = "Desc",
+                                Categories = ItemInfo.ECategory.Sustainable,
+                                PriceFunction = i => 500 + 50*i.AmountOwned,
+                                IdleMod = v => (v + 10, true)
+                            };
+                        _availableItems.Add(item);
+
+                        item = new()
+                            {
+                                ID = "petro",
+                                DisplayName = "Petroleum",
+                                Desc = "Desc",
+                                Categories = ItemInfo.ECategory.Nonsustainable,
+                                PriceFunction = i => 300 + 70*i.AmountOwned,
+                                ClickMod = v => (v + 5, true),
+                                SustianMod = v => (v + .01f, true)
+                            };
+                        _availableItems.Add(item);
+                    }
+                }
+            },
+            new AutoBuff()
+            {
+                Condition = () => Cash > 1000000,
+                Effect = () => new BuffEffect()
+                {
+                    ID = "1m",
+                    DisplayName = "1m",
+                    Desc = "Desc",
+                    OnGetAction = () =>
+                    {
+                        ItemInfo item = new()
+                            {
+                                ID = "import",
+                                DisplayName = "Import Goods",
+                                Desc = "Desc",
+                                Categories = ItemInfo.ECategory.Sustainable,
+                                PriceFunction = i => 100000 + 9000*i.AmountOwned,
+                                IdleMod = v => (v + 1000, true)
+                            };
+                        _availableItems.Add(item);
+
+                        item = new()
+                            {
+                                ID = "rig",
+                                DisplayName = "Oil Rig",
+                                Desc = "Desc",
+                                Categories = ItemInfo.ECategory.Nonsustainable,
+                                PriceFunction = i => 60000 + 1000*i.AmountOwned,
+                                ClickMod = v => (v + 5000, true),
+                                SustianMod = v => (v + .2f, true)
+                            };
+                        _availableItems.Add(item);
                     }
                 }
             }

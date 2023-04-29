@@ -14,6 +14,7 @@ public class ItemInfo : Thing
     }
 
     //required
+    public Sprite Sprite { get; set; }
     public ECategory Categories { get; set; }
     public Func<ItemInfo, float> PriceFunction { get; set; }
     
