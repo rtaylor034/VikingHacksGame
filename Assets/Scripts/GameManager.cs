@@ -84,11 +84,35 @@ public class GameManager : MonoBehaviour
         Cash += CPC;
     }
 
+    public void Refresh()
+    {
+        float s = STARTING_CPC;
+        foreach (var func in _clickModifiers)
+        {
+            (s, _) = func(s);
+        }
+        CPC = s;
+
+        s = STARTING_CPS;
+        foreach (var func in _idleModifiers)
+        {
+            (s, _) = func(s);
+        }
+        CPS = s;
+
+        s = STARTING_SPM;
+        foreach (var func in _sustainModifiers)
+        {
+            (s, _) = func(s);
+        }
+        SPM = s;
+    }
     public void AddBuffEffect(BuffEffect buff)
     {
         BuffAdded(buff);
         buff.OnGetAction();
         _activeBuffs.Add(buff);
+        Refresh();
     }
     public void AddClickMod(Modifier mod)
     {
