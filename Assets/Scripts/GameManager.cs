@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
         OneSecUpdate();
     }
 
-    void OnClick()
+    public void OnClick()
     {
         Cash += CPC;
     }
