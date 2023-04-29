@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public delegate float Modifier(float preVal);
 public class GameManager : MonoBehaviour
 {
     public static GameManager GAME;
@@ -17,9 +18,9 @@ public class GameManager : MonoBehaviour
     public float Cash { get; set; }
     public float Sustian { get; set; }
 
-    private List<Func<float, float>> _clickModifiers;
-    private List<Func<float, float>> _idleModifiers;
-    private List<Func<float, float>> _sustainModifiers;
+    private List<Modifier> _clickModifiers;
+    private List<Modifier> _idleModifiers;
+    private List<Modifier> _sustainModifiers;
 
 
     public float CPS { get; private set; }
@@ -37,6 +38,8 @@ public class GameManager : MonoBehaviour
         Sustian = STARTING_SUSTAIN;
         _clickModifiers = new();
         _idleModifiers = new();
+        _sustainModifiers = new();
+
     }
     // Start is called before the first frame update
     void Start()
@@ -55,7 +58,7 @@ public class GameManager : MonoBehaviour
         Cash += CPC;
     }
 
-    public void AddClickMod(Func<float, float> mod, bool front = false)
+    public void AddClickMod(Modifier mod, bool front = false)
     {
         if (front) _clickModifiers.Insert(0, mod);
         else _clickModifiers.Add(mod);
@@ -66,7 +69,7 @@ public class GameManager : MonoBehaviour
         }
         CPC = s;
     }
-    public void AddIdleMod(Func<float, float> mod, bool front = false)
+    public void AddIdleMod(Modifier mod, bool front = false)
     {
         if (front) _idleModifiers.Insert(0, mod);
         else _idleModifiers.Add(mod);
@@ -77,4 +80,16 @@ public class GameManager : MonoBehaviour
         }
         CPS = s;
     }
+    public void AddSustainMod(Modifier mod, bool front = false)
+    {
+        if (front) _sustainModifiers.Insert(0, mod);
+        else _sustainModifiers.Add(mod);
+        float s = STARTING_SPM;
+        foreach (var func in _sustainModifiers)
+        {
+            s = func(s);
+        }
+        SPM = s;
+    }
+
 }

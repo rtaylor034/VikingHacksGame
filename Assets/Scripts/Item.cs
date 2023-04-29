@@ -1,18 +1,42 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item : MonoBehaviour
+public class Item
 {
-    // Start is called before the first frame update
-    void Start()
+    public enum ECategory
     {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
+    }
+    //required
+    public string ID { get; set; }
+    public string DisplayName { get; set; }
+    public ECategory Category { get; set; }
+    public Func<int, float> PriceFunction { get; set; }
+    
+
+    //defaulted
+    public (Modifier mod, bool f) SustianMod { get; set; } = (v => v, false);
+    public (Modifier mod, bool f) IdleMod { get; set; } = (v => v, false);
+    public (Modifier mod, bool f) ClickMod { get; set; } = (v => v, false);
+    public Func<int, float> SustainEffectFunction { get; set; } = _ => 0;
+
+
+    public int AmountOwned { get; private set; }
+    public float Price { get; private set; }
+    public float SustainEffect { get; private set; }
+
+    public void Buy()
     {
+        GameManager.GAME.Cash -= Price;
+        GameManager.GAME.Sustian += SustainEffect;
+        AmountOwned++;
+        GameManager.GAME.AddClickMod(ClickMod.mod, ClickMod.f);
+        GameManager.GAME.AddIdleMod(IdleMod.mod, IdleMod.f);
+        GameManager.GAME.AddSustainMod(SustianMod.mod, SustianMod.f);
+        Price = PriceFunction(AmountOwned);
+        SustainEffect = SustainEffectFunction(AmountOwned);
         
     }
 }
