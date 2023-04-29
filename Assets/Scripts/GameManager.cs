@@ -13,15 +13,15 @@ public class GameManager : MonoBehaviour
 
     public static GameManager GAME;
 
-    public readonly static float STARTING_CPS = 0;
-    public readonly static float STARTING_CPC = 1;
-    public readonly static float STARTING_SPM = 0;
+    public readonly static float STARTING_CPS = 0; //cash per second?
+    public readonly static float STARTING_CPC = 1; //cash per click 
+    public readonly static float STARTING_SPM = 0; // sustain per mintue
 
     public readonly static float STARTING_CASH = 0;
     public readonly static float STARTING_SUSTAIN = 0;
 
     public float Cash { get; set; }
-    public float Sustian { get; set; }
+    public float Sustain { get; set; }
 
     public float CPS { get; private set; }
     public float CPC { get; private set; }
