@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item
+public class ItemInfo
 {
+    [Flags]
     public enum ECategory
     {
 
@@ -12,16 +13,16 @@ public class Item
     //required
     public string ID { get; set; }
     public string DisplayName { get; set; }
-    public ECategory Category { get; set; }
-    public Func<Item, float> PriceFunction { get; set; }
+    public ECategory Categories { get; set; }
+    public Func<ItemInfo, float> PriceFunction { get; set; }
     
 
     //defaulted
     public (Modifier mod, bool f) SustianMod { get; set; } = (v => v, false);
     public (Modifier mod, bool f) IdleMod { get; set; } = (v => v, false);
     public (Modifier mod, bool f) ClickMod { get; set; } = (v => v, false);
-    public Func<Item, float> SustainEffectFunction { get; set; } = _ => 0;
-    public Func<Item, bool> AdditionalBuyConditions { get; set; } = _ => true;
+    public Func<ItemInfo, float> SustainEffectFunction { get; set; } = _ => 0;
+    public Func<ItemInfo, bool> AdditionalBuyConditions { get; set; } = _ => true;
 
     //non set
     public int AmountOwned { get; private set; }

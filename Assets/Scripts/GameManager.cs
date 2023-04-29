@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public delegate float Modifier(float preVal);
+public delegate T Construction<T>();
 public class GameManager : MonoBehaviour
 {
     public static GameManager GAME;
@@ -17,19 +18,21 @@ public class GameManager : MonoBehaviour
 
     public float Cash { get; set; }
     public float Sustian { get; set; }
+    
 
     private List<Modifier> _clickModifiers;
     private List<Modifier> _idleModifiers;
     private List<Modifier> _sustainModifiers;
 
+    private List<ItemInfo> _availableItems;
+    private List<BuffEffect> _ActiveBuffs;
+    private List<MilestoneInfo> _availableMilestones;
 
     public float CPS { get; private set; }
     public float CPC { get; private set; }
     public float SPM { get; private set; }
 
-
-
-    private void Awake()
+    private void NewGame()
     {
         CPS = STARTING_CPS;
         CPC = STARTING_CPC;
@@ -39,7 +42,11 @@ public class GameManager : MonoBehaviour
         _clickModifiers = new();
         _idleModifiers = new();
         _sustainModifiers = new();
-
+    }
+    private void Awake()
+    {
+        GAME = this;
+        NewGame();
     }
     // Start is called before the first frame update
     void Start()
@@ -56,7 +63,6 @@ public class GameManager : MonoBehaviour
     void Click()
     {
         Cash += CPC;
-        
     }
 
     public void AddClickMod(Modifier mod, bool front = false)
