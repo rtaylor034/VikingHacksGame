@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
 {
 
     public event Action<MilestoneInfo> MilestoneConditionMet;
+    public event Action<AutoBuff> AutoBuffConditionMet;
+    public event Action<BuffEffect> BuffAdded;
 
     public static GameManager GAME;
 
@@ -19,7 +21,7 @@ public class GameManager : MonoBehaviour
     public readonly static float STARTING_SPM = 0; // sustain per mintue
 
     public readonly static float STARTING_CASH = 0;
-    public readonly static float STARTING_SUSTAIN = 0;
+    public readonly static float STARTING_SUSTAIN = 100;
 
     public float Cash { get; set; }
     public float Sustain { get; set; }
@@ -66,6 +68,14 @@ public class GameManager : MonoBehaviour
                 _availableMilestones.Remove(milestone);
             }
         }
+        foreach (var auto in _autoBuffs)
+        {
+            if (auto.Condition())
+            {
+                AutoBuffConditionMet(auto);
+                _autoBuffs.Remove(auto);
+            }
+        }
         await Task.Delay(1000);
         OneSecUpdate();
     }
@@ -77,6 +87,7 @@ public class GameManager : MonoBehaviour
 
     public void AddBuffEffect(BuffEffect buff)
     {
+        BuffAdded(buff);
         buff.OnGetAction();
         _activeBuffs.Add(buff);
     }
