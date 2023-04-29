@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
 
     public readonly static float STARTING_CASH = 0;
     public readonly static float STARTING_SUSTAIN = 100;
-
+    //other
     public float Cash { get; set; }
     public float Sustain { get; set; }
 
