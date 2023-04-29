@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
     private List<ItemInfo> _availableItems;
     private List<BuffEffect> _activeBuffs;
     private List<MilestoneInfo> _availableMilestones;
-    private List<BuffEffect> _autoBuffs;
+    private List<AutoBuff> _autoBuffs;
 
     private void NewGame()
     {
@@ -130,7 +130,7 @@ public class GameManager : MonoBehaviour
                 Categories = ItemInfo.ECategory.Sustainable,
                 PriceFunction = i => 10 + 1*i.AmountOwned,
                 IdleMod = v => (v + 1, true)
-
+                
             }
         };
 
@@ -179,6 +179,25 @@ public class GameManager : MonoBehaviour
                     }
                 }
 
+            }
+        };
+
+        //AUTOBUFFS
+        _autoBuffs = new()
+        {
+            new AutoBuff()
+            {
+                Condition = () => Sustain < 50,
+                Effect = () => new BuffEffect()
+                {
+                    ID = "test_autobuff",
+                    DisplayName = "Test Autobuff",
+                    Desc = "D",
+                    OnGetAction = () =>
+                    {
+                        AddClickMod(v => (v / 2, false));
+                    }
+                }
             }
         };
     }
