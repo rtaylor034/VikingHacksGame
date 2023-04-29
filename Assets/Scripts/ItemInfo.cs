@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemInfo
+public class ItemInfo : Thing
 {
     [Flags]
     public enum ECategory
@@ -14,8 +14,6 @@ public class ItemInfo
     }
 
     //required
-    public string ID { get; set; }
-    public string DisplayName { get; set; }
     public ECategory Categories { get; set; }
     public Func<ItemInfo, float> PriceFunction { get; set; }
     

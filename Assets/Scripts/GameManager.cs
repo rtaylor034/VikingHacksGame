@@ -35,45 +35,8 @@ public class GameManager : MonoBehaviour
     private List<ItemInfo> _availableItems;
     private List<BuffEffect> _activeBuffs;
     private List<MilestoneInfo> _availableMilestones;
+    private List<BuffEffect> _autoBuffs;
 
-    private void StartingAvailable()
-    {
-        _availableItems = new()
-        {
-            new()
-            {
-                ID = "test_item",
-                DisplayName = "Test Item",
-                Categories = ItemInfo.ECategory.Nonsustainable,
-                PriceFunction = i => 10 + 1*i.AmountOwned,
-                IdleMod = v => (v + 1, true)
-                
-            }
-        };
-        _availableMilestones = new()
-        {
-            new()
-            {
-                ID = "test_milestone",
-                Condition = () => Cash > 100,
-                Choices =
-                {
-                    () => new()
-                    {
-                        ID = "test_buff",
-                        OnGetAction = () =>
-                        {
-                            foreach (var item in _availableItems.Where(i => i.ID == "test_item"))
-                            {
-                                item.IdleMod = v => (v + 2, true);
-                            }
-                        }
-                    }
-                }
-
-            }
-        };
-    }
     private void NewGame()
     {
         CPS = STARTING_CPS;
@@ -84,7 +47,7 @@ public class GameManager : MonoBehaviour
         _clickModifiers = new();
         _idleModifiers = new();
         _sustainModifiers = new();
-        StartingAvailable();
+        Setup();
     }
     private void Awake()
     {
@@ -152,6 +115,72 @@ public class GameManager : MonoBehaviour
             (s, _) = func(s);
         }
         SPM = s;
+    }
+
+    private void Setup()
+    {
+        //ITEMS
+        _availableItems = new()
+        {
+            new ItemInfo()
+            {
+                ID = "test_item",
+                DisplayName = "Test Item",
+                Desc = "D",
+                Categories = ItemInfo.ECategory.Sustainable,
+                PriceFunction = i => 10 + 1*i.AmountOwned,
+                IdleMod = v => (v + 1, true)
+
+            }
+        };
+
+        //MILESTONES
+        _availableMilestones = new()
+        {
+            new MilestoneInfo()
+            {
+                ID = "test_milestone",
+                DisplayName = "Test Milestone",
+                Desc = "D",
+                Condition = () => Cash > 100,
+                Choices =
+                {
+                    () => new BuffEffect()
+                    {
+                        ID = "test_buff",
+                        DisplayName = "Test Milestone",
+                        Desc = "D",
+                        OnGetAction = () =>
+                        {
+                            foreach (var item in _availableItems.Where(i => i.ID == "test_item"))
+                            {
+                                item.IdleMod = v => (v + 2, true);
+                            }
+                        }
+                    },
+                    () => new BuffEffect()
+                    {
+                        ID = "test_buff2",
+                        DisplayName = "Test Buff 2",
+                        Desc = "D",
+                        OnGetAction = () =>
+                        {
+                            ItemInfo item = new()
+                            {
+                                ID = "upgrade_item",
+                                DisplayName = "Upgrade Item",
+                                Desc = "D",
+                                Categories = ItemInfo.ECategory.Nonsustainable,
+                                PriceFunction = i => 15 + 2*i.AmountOwned,
+                                ClickMod = v => (v + 1, true)
+                            };
+                            _availableItems.Add(item);
+                        }
+                    }
+                }
+
+            }
+        };
     }
 
 }
