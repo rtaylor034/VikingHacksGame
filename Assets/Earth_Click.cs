@@ -19,6 +19,6 @@ public class Earth_Click : MonoBehaviour
     void OnClick() 
     {
         Debug.Log("Bruh");
-        
+        GameManager.GAME.OnClick();
     }
 }
