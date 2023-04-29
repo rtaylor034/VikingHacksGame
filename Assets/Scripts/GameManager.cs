@@ -56,6 +56,7 @@ public class GameManager : MonoBehaviour
     void Click()
     {
         Cash += CPC;
+        
     }
 
     public void AddClickMod(Modifier mod, bool front = false)
