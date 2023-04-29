@@ -134,14 +134,75 @@ public class GameManager : MonoBehaviour
         _availableItems = new()
         {
             new ItemInfo()
-            {
-                ID = "test_item",
-                DisplayName = "Test Item",
-                Desc = "D",
+            {//bioderadiable producs, solar panels, domestic goods, wind turbine, plastic packaging, Petrolium barrels, imported goods, oil rig
+              //
+                ID = "biodegradeable",
+                DisplayName = "Biodegradeable Products",
+                Desc = "B",
                 Categories = ItemInfo.ECategory.Sustainable,
                 PriceFunction = i => 10 + 1*i.AmountOwned,
                 IdleMod = v => (v + 1, true)
                 
+            },
+            new ItemInfo()
+            {
+                ID = "solar",
+                DisplayName = "Solar Panels",
+                Desc = "S",
+                Categories = ItemInfo.ECategory.Sustainable,
+                PriceFunction = i => 10 + 1*i.AmountOwned,
+                IdleMod = v => (v + 1, true)
+
+            },
+            new ItemInfo()
+            {
+                ID = "domestic",
+                DisplayName = "Domestic Goods",
+                Desc = "D",
+                Categories = ItemInfo.ECategory.Sustainable,
+                PriceFunction = i => 10 + 1*i.AmountOwned,
+                IdleMod = v => (v + 1, true)
+
+            },
+               new ItemInfo()
+            {
+                ID = "wind",
+                DisplayName = "Wind Turbines",
+                Desc = "W",
+                Categories = ItemInfo.ECategory.Nonsustainable,
+                PriceFunction = i => 10 + 1*i.AmountOwned,
+                IdleMod = v => (v + 1, true)
+
+            },
+                new ItemInfo()
+            {
+                ID = "petrolium",
+                DisplayName = "Petrolium Barrels",
+                Desc = "P",
+                Categories = ItemInfo.ECategory.Nonsustainable,
+                PriceFunction = i => 10 + 1*i.AmountOwned,
+                IdleMod = v => (v + 1, true)
+
+            },
+                new ItemInfo()
+            {
+                ID = "imported",
+                DisplayName = "Imported Goods",
+                Desc = "I",
+                Categories = ItemInfo.ECategory.Nonsustainable,
+                PriceFunction = i => 10 + 1*i.AmountOwned,
+                IdleMod = v => (v + 1, true)
+
+            },
+            new ItemInfo()
+            {
+                ID = "oil",
+                DisplayName = "Oil Rigs",
+                Desc = "O",
+                Categories = ItemInfo.ECategory.Nonsustainable,
+                PriceFunction = i => 10 + 1*i.AmountOwned,
+                IdleMod = v => (v + 1, true)
+
             }
         };
 
