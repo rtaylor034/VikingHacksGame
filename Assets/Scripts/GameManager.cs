@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
 
     public readonly static float STARTING_CPS = 0;
     public readonly static float STARTING_CPC = 1;
+    public readonly static float STARTING_SPM = 0;
 
     public readonly static float STARTING_CASH = 0;
     public readonly static float STARTING_SUSTAIN = 0;
@@ -18,9 +19,12 @@ public class GameManager : MonoBehaviour
 
     private List<Func<float, float>> _clickModifiers;
     private List<Func<float, float>> _idleModifiers;
+    private List<Func<float, float>> _sustainModifiers;
+
 
     public float CPS { get; private set; }
     public float CPC { get; private set; }
+    public float SPM { get; private set; }
 
 
 
@@ -28,6 +32,7 @@ public class GameManager : MonoBehaviour
     {
         CPS = STARTING_CPS;
         CPC = STARTING_CPC;
+        SPM = STARTING_SPM;
         Cash = STARTING_CASH;
         Sustian = STARTING_SUSTAIN;
         _clickModifiers = new();
@@ -47,7 +52,7 @@ public class GameManager : MonoBehaviour
 
     void Click()
     {
-
+        Cash += CPC;
     }
 
     public void AddClickMod(Func<float, float> mod, bool front = false)
