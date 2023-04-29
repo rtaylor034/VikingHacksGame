@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     public readonly static float STARTING_SUSTAIN = 100;
     //other
     public float Cash { get; set; }
+  //something i dont know
     public float Sustain { get; set; }
 
     public float CPS { get; private set; }
