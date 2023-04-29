@@ -32,7 +32,7 @@ public class ItemInfo
     public void Buy()
     {
         GameManager.GAME.Cash -= Price;
-        GameManager.GAME.Sustian += SustainEffect;
+        GameManager.GAME.Sustain += SustainEffect;
         AmountOwned++;
         GameManager.GAME.AddClickMod(ClickMod.mod, ClickMod.f);
         GameManager.GAME.AddIdleMod(IdleMod.mod, IdleMod.f);

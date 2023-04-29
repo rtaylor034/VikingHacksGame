@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
         CPC = STARTING_CPC;
         SPM = STARTING_SPM;
         Cash = STARTING_CASH;
-        Sustian = STARTING_SUSTAIN;
+        Sustain = STARTING_SUSTAIN;
         _clickModifiers = new();
         _idleModifiers = new();
         _sustainModifiers = new();
