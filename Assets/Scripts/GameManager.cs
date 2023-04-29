@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
 {
 
     public event Action<MilestoneInfo> MilestoneConditionMet;
+    public event Action<AutoBuff> AutoBuffConditionMet;
+    public event Action<BuffEffect> BuffAdded;
 
     public static GameManager GAME;
 
@@ -19,7 +21,7 @@ public class GameManager : MonoBehaviour
     public readonly static float STARTING_SPM = 0; // sustain per mintue
 
     public readonly static float STARTING_CASH = 0;
-    public readonly static float STARTING_SUSTAIN = 0;
+    public readonly static float STARTING_SUSTAIN = 100;
 
     public float Cash { get; set; }
     public float Sustain { get; set; }
@@ -35,7 +37,7 @@ public class GameManager : MonoBehaviour
     private List<ItemInfo> _availableItems;
     private List<BuffEffect> _activeBuffs;
     private List<MilestoneInfo> _availableMilestones;
-    private List<BuffEffect> _autoBuffs;
+    private List<AutoBuff> _autoBuffs;
 
     private void NewGame()
     {
@@ -66,6 +68,14 @@ public class GameManager : MonoBehaviour
                 _availableMilestones.Remove(milestone);
             }
         }
+        foreach (var auto in _autoBuffs)
+        {
+            if (auto.Condition())
+            {
+                AutoBuffConditionMet(auto);
+                _autoBuffs.Remove(auto);
+            }
+        }
         await Task.Delay(1000);
         OneSecUpdate();
     }
@@ -77,6 +87,7 @@ public class GameManager : MonoBehaviour
 
     public void AddBuffEffect(BuffEffect buff)
     {
+        BuffAdded(buff);
         buff.OnGetAction();
         _activeBuffs.Add(buff);
     }
@@ -123,11 +134,72 @@ public class GameManager : MonoBehaviour
         _availableItems = new()
         {
             new ItemInfo()
+            {//bioderadiable producs, solar panels, domestic goods, wind turbine, plastic packaging, Petrolium barrels, imported goods, oil rig
+              //
+                ID = "biodegradeable",
+                DisplayName = "Biodegradeable Products",
+                Desc = "B",
+                Categories = ItemInfo.ECategory.Sustainable,
+                PriceFunction = i => 10 + 1*i.AmountOwned,
+                IdleMod = v => (v + 1, true)
+                
+            },
+            new ItemInfo()
             {
-                ID = "test_item",
-                DisplayName = "Test Item",
+                ID = "solar",
+                DisplayName = "Solar Panels",
+                Desc = "S",
+                Categories = ItemInfo.ECategory.Sustainable,
+                PriceFunction = i => 10 + 1*i.AmountOwned,
+                IdleMod = v => (v + 1, true)
+
+            },
+            new ItemInfo()
+            {
+                ID = "domestic",
+                DisplayName = "Domestic Goods",
                 Desc = "D",
                 Categories = ItemInfo.ECategory.Sustainable,
+                PriceFunction = i => 10 + 1*i.AmountOwned,
+                IdleMod = v => (v + 1, true)
+
+            },
+               new ItemInfo()
+            {
+                ID = "wind",
+                DisplayName = "Wind Turbines",
+                Desc = "W",
+                Categories = ItemInfo.ECategory.Nonsustainable,
+                PriceFunction = i => 10 + 1*i.AmountOwned,
+                IdleMod = v => (v + 1, true)
+
+            },
+                new ItemInfo()
+            {
+                ID = "petrolium",
+                DisplayName = "Petrolium Barrels",
+                Desc = "P",
+                Categories = ItemInfo.ECategory.Nonsustainable,
+                PriceFunction = i => 10 + 1*i.AmountOwned,
+                IdleMod = v => (v + 1, true)
+
+            },
+                new ItemInfo()
+            {
+                ID = "imported",
+                DisplayName = "Imported Goods",
+                Desc = "I",
+                Categories = ItemInfo.ECategory.Nonsustainable,
+                PriceFunction = i => 10 + 1*i.AmountOwned,
+                IdleMod = v => (v + 1, true)
+
+            },
+            new ItemInfo()
+            {
+                ID = "oil",
+                DisplayName = "Oil Rigs",
+                Desc = "O",
+                Categories = ItemInfo.ECategory.Nonsustainable,
                 PriceFunction = i => 10 + 1*i.AmountOwned,
                 IdleMod = v => (v + 1, true)
 
@@ -179,6 +251,25 @@ public class GameManager : MonoBehaviour
                     }
                 }
 
+            }
+        };
+
+        //AUTOBUFFS
+        _autoBuffs = new()
+        {
+            new AutoBuff()
+            {
+                Condition = () => Sustain < 50,
+                Effect = () => new BuffEffect()
+                {
+                    ID = "test_autobuff",
+                    DisplayName = "Test Autobuff",
+                    Desc = "D",
+                    OnGetAction = () =>
+                    {
+                        AddClickMod(v => (v / 2, false));
+                    }
+                }
             }
         };
     }
