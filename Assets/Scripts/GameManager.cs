@@ -152,6 +152,29 @@ public class GameManager : MonoBehaviour
         SPM = s;
     }
 
+    public void ShopButton(int index)
+    {
+        if (index >= _availableItems.Count)
+        {
+            Debug.Log("This item is not unlocked yet!");
+            return;
+        }
+        ItemInfo item = _availableItems[index];
+        if (item.Price > Cash)
+        {
+            Debug.Log(item.DisplayName + " is too expensive: $" + item.Price);
+            return;
+        }
+        if (!item.AdditionalBuyConditions(item))
+        {
+            Debug.Log("You do not meet the conditions to buy a " + item.DisplayName);
+            return;
+        }
+        Debug.Log($"{item.DisplayName} bought for {item.Price}. ({item.AmountOwned} owned)");
+        item.Buy();
+        
+
+    }
     private void Setup()
     {
         //ITEMS
