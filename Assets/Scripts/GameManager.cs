@@ -152,7 +152,7 @@ public class GameManager : MonoBehaviour
         SPM = s;
     }
 
-    public void ShopButton(int index)
+    public void ShopTryBuy(int index)
     {
         if (index >= _availableItems.Count)
         {
