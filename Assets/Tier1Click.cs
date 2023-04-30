@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Earth_Click : MonoBehaviour
+public class Tier1Click : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -16,9 +16,9 @@ public class Earth_Click : MonoBehaviour
         
     }
 
-    void OnClick() 
+    void OnClick()
     {
-        
+
         GameManager.GAME.OnClick();
     }
 }
