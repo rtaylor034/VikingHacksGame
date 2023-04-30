@@ -14,6 +14,6 @@ public class SustainDisplay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        SustainText.text = GameManager.GAME.Sustain.ToString();
+        SustainText.text = GameManager.GAME.Sustain.ToString() + "%";
     }
 }
