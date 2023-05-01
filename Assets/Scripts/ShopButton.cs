@@ -4,15 +4,8 @@ using UnityEngine;
 
 public class ShopButton : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public void ShopClick(int index)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        GameManager.GAME.ShopTryBuy(index);
     }
 }

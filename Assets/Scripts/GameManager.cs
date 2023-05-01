@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
 
     public readonly static float STARTING_CASH = 0;
     public readonly static float STARTING_SUSTAIN = 100;
+
+    public readonly static int CPS_UPDATE_FREQ = 200;
     public float Cash { get; set; }
     public float Sustain { get; set; }
 
@@ -56,6 +58,7 @@ public class GameManager : MonoBehaviour
         GAME = this;
         NewGame();
         OneSecUpdate();
+        CPSUpdate();
     }
 
     async Task OneSecUpdate()
@@ -80,11 +83,17 @@ public class GameManager : MonoBehaviour
         OneSecUpdate();
     }
 
+    async Task CPSUpdate()
+    {
+        Cash += CPS * CPS_UPDATE_FREQ / 1000;
+        await Task.Delay(CPS_UPDATE_FREQ);
+        CPSUpdate();
+    }
+
     public void OnClick()
     {
         Cash += CPC;
     }
-
     public void Refresh()
     {
         float s = STARTING_CPC;
@@ -181,17 +190,26 @@ public class GameManager : MonoBehaviour
         _availableItems = new()
         {
             new ItemInfo()
-            {//bioderadiable producs, solar panels, domestic goods, wind turbine, plastic packaging, Petrolium barrels, imported goods, oil rig
-              //
-                ID = "biodegradeable",
+            {
+                ID = "suspackage",
                 DisplayName = "Biodegradeable Products",
                 Desc = "B",
                 Categories = ItemInfo.ECategory.Sustainable,
                 PriceFunction = i => 10 + 1*i.AmountOwned,
-                IdleMod = v => (v + 1, true)
+                IdleMod = v => (v + .3f, true)
                 
+            },
+            new ItemInfo()
+            {
+                ID = "badpackage",
+                DisplayName = "Plastic Products",
+                Desc = "B",
+                Categories = ItemInfo.ECategory.Nonsustainable,
+                PriceFunction = i => 8 + .8f*i.AmountOwned,
+                ClickMod = v => (v + .4f, true)
+
             }
-           
+
         };
 
         //MILESTONES
