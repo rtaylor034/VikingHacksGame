@@ -18,13 +18,16 @@ public class GameManager : MonoBehaviour
     public static GameManager GAME;
 
     public readonly static float STARTING_CPS = 0; //cash per second?
-    public readonly static float STARTING_CPC = 1; //cash per click 
+    public readonly static float STARTING_CPC = 100; //cash per click 
     public readonly static float STARTING_SPM = 0; // sustain per mintue
 
-    public readonly static float STARTING_CASH = 0;
+    public readonly static float STARTING_CASH = 1001;
     public readonly static float STARTING_SUSTAIN = 100;
 
+    //ms
     public readonly static int CPS_UPDATE_FREQ = 200;
+    //seconds
+    public readonly static int SPM_UPDATE_FREQ = 5;
     public float Cash { get; set; }
     public float Sustain { get; set; }
 
@@ -57,24 +60,30 @@ public class GameManager : MonoBehaviour
     {
         GAME = this;
         NewGame();
-        OneSecUpdate();
+        
         CPSUpdate();
+        SPMUpdate();
+        OneSecUpdate();
     }
 
     async Task OneSecUpdate()
     {
+        
         foreach (var milestone in _availableMilestones)
         {
             if (milestone.Condition())
             {
+                //must choose in event
                 MilestoneConditionMet(milestone);
                 _availableMilestones.Remove(milestone);
             }
         }
         foreach (var auto in _autoBuffs)
-        {
+        {  
             if (auto.Condition())
             {
+                Debug.Log(auto.Effect().DisplayName);
+                AddBuffEffect(auto.Effect());
                 AutoBuffConditionMet(auto);
                 _autoBuffs.Remove(auto);
             }
@@ -85,9 +94,17 @@ public class GameManager : MonoBehaviour
 
     async Task CPSUpdate()
     {
+        Debug.Log("2");
         Cash += CPS * CPS_UPDATE_FREQ / 1000;
         await Task.Delay(CPS_UPDATE_FREQ);
         CPSUpdate();
+    }
+    async Task SPMUpdate()
+    {
+
+        Sustain += SPM * SPM_UPDATE_FREQ / 60;
+        await Task.Delay(SPM_UPDATE_FREQ * 1000);
+        SPMUpdate();
     }
 
     public void OnClick()
@@ -206,7 +223,8 @@ public class GameManager : MonoBehaviour
                 Desc = "B",
                 Categories = ItemInfo.ECategory.Nonsustainable,
                 PriceFunction = i => 8 + .8f*i.AmountOwned,
-                ClickMod = v => (v + .4f, true)
+                ClickMod = v => (v + .4f, true),
+                SustianMod = v => (v - .003f, true)
 
             }
 
@@ -356,7 +374,7 @@ public class GameManager : MonoBehaviour
                                 Categories = ItemInfo.ECategory.Nonsustainable,
                                 PriceFunction = i => 300 + 70*i.AmountOwned,
                                 ClickMod = v => (v + 5, true),
-                                SustianMod = v => (v + .01f, true)
+                                SustianMod = v => (v - .01f, true)
                             };
                         _availableItems.Add(item);
                     }
@@ -391,7 +409,52 @@ public class GameManager : MonoBehaviour
                                 Categories = ItemInfo.ECategory.Nonsustainable,
                                 PriceFunction = i => 60000 + 1000*i.AmountOwned,
                                 ClickMod = v => (v + 5000, true),
-                                SustianMod = v => (v + .2f, true)
+                                SustianMod = v => (v - .05f, true)
+                            };
+                        _availableItems.Add(item);
+                    }
+                }
+            },
+            new AutoBuff()
+            {
+                Condition = () => Cash > 1000000000,
+                Effect = () => new BuffEffect()
+                {
+                    ID = "1b",
+                    DisplayName = "1b",
+                    Desc = "Desc",
+                    OnGetAction = () =>
+                    {
+                        ItemInfo item = new()
+                            {
+                                ID = "wind",
+                                DisplayName = "Wind Turbines",
+                                Desc = "Desc",
+                                Categories = ItemInfo.ECategory.Sustainable,
+                                PriceFunction = i => 50000000 + 900000*i.AmountOwned,
+                                IdleMod = v =>
+                                {
+                                    int count = 0;
+                                    foreach (var i in _availableItems.Where(i => i.Categories.HasFlag(ItemInfo.ECategory.Sustainable))) count += i.AmountOwned;
+                                    return (50000 + count * 10, true);
+                                }
+                            };
+                        _availableItems.Add(item);
+
+                        item = new()
+                            {
+                                ID = "rig",
+                                DisplayName = "Oil Rig",
+                                Desc = "Desc",
+                                Categories = ItemInfo.ECategory.Nonsustainable,
+                                PriceFunction = i => 10000000 + 30000*i.AmountOwned,
+                                ClickMod = v =>
+                                {
+                                    int count = 0;
+                                    foreach (var i in _availableItems.Where(i => i.Categories.HasFlag(ItemInfo.ECategory.Nonsustainable))) count += i.AmountOwned;
+                                    return (100000 - count * 100, true);
+                                },
+                                SustianMod = v => (v - .5f, true)
                             };
                         _availableItems.Add(item);
                     }
